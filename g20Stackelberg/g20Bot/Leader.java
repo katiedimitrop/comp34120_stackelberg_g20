@@ -1,3 +1,4 @@
+package g20Bot;
 import comp34120.ex2.PlayerImpl;
 import comp34120.ex2.PlayerType;
 import comp34120.ex2.Record;
@@ -33,7 +34,7 @@ final class Leader
 	{
 		/* The first parameter *MUST* be PlayerType.LEADER, you can change
 		 * the second parameter, the name of the leader, such as "My Leader" */
-		super(PlayerType.LEADER, "New Leader");
+		super(PlayerType.LEADER, "G20 Leader");
 	}
 
 	/**

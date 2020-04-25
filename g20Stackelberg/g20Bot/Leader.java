@@ -20,6 +20,7 @@ final class Leader
 {
 	private ArrayList<Record> records;
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
+	private Maximiser maximiser;
 	/**
 	 * In the constructor, you need to call the constructor
 	 * of PlayerImpl in the first line, so that you don't need to
@@ -77,6 +78,7 @@ final class Leader
 	public void startSimulation(int p_steps)
 		throws RemoteException
 	{
+		this.maximiser = new CalculusMaximiser();
 		records = new ArrayList<>();
 		// initialise records so we don't have to get the history each time
 		for(int i = 1; i <= 100; i++) {
@@ -119,13 +121,14 @@ final class Leader
 			// we need to wait until now so that the follower price is updated
 			records.add(m_platformStub.query(m_type, p_date - 1));
 		}
-		float l_newPrice = this.genPrice(1.8F, 0.05F);
-		this.m_platformStub.publishPrice(m_type, l_newPrice);
 
 		Regression regression = new WLSRegression(records);
 		regression.estimateAB();
-		m_platformStub.log(m_type, p_date + "[" + regression.toString() + "]");
-		m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(l_newPrice));
+		float bestPrice = maximiser.getBestPrice(regression, p_date);
+
+		m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
+
+		this.m_platformStub.publishPrice(m_type, bestPrice);
 	}
 
 

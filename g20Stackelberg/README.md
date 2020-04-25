@@ -10,12 +10,12 @@ To run the bot, first set up the java rmi registry: <br><br>
 
 Run the Platform GUI: <br>
 
-`java -classpath poi-3.7-20101029.jar:
+`java -classpath poi-3.7-20101029.jar: 
 -Djava.rmi.server.hostname=<HOST_IP> comp34120.ex2.Main &`
 
 Run our Leader Bot: <br>
 
-`java -Djava.rmi.server.hostname=<HOST_IP> build/g20Bot.jar `
+`java -Djava.rmi.server.hostname=<HOST_IP> -jar build/g20Bot.jar `
 
 
 

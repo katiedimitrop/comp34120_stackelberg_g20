@@ -1,7 +1,5 @@
-package g20Bot;
-import comp34120.ex2.PlayerImpl;
-import comp34120.ex2.PlayerType;
-import comp34120.ex2.Record;
+package comp34120.ex2;
+
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

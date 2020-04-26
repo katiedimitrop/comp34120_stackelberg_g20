@@ -1,5 +1,4 @@
-package g20Bot;
-import comp34120.ex2.Record;
+package comp34120.ex2;
 import java.util.ArrayList;
 
 public class WLSRegression extends Regression {

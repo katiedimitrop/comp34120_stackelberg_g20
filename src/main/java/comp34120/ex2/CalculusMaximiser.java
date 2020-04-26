@@ -1,5 +1,8 @@
-package g20Bot;
-
+package comp34120.ex2;
+/**
+ * Calculus Maximiser to Work out Max Value from Quadratic Graph
+ * @author Ska
+ */
 public class CalculusMaximiser implements Maximiser{
 
     float UNIT_COST = 1.00f;
@@ -12,14 +15,15 @@ public class CalculusMaximiser implements Maximiser{
         return (lPrice - UNIT_COST) * demandModel;
     }
 
-    //LP = Leader Price UC = Unit Cost (1.00) FP = Follower Price
-    //FP = a + bLP
-    //Profit = (LP - UC) * (2 - LP + 0.3FP)
-    //Profit = (LP - 1.00) * (2 - LP + 0.3(a + bLP))
-    //J(LP) = (LP - 1.00) * (2 - LP + 0.3(a + bLP))
-    //LP is Max when J'(LP) = 0
-    //There we can work out maximum using the following formula
-    //LP = (-0.3a + 0.3b - 3) / (0.6 - 2)
+    /*
+    LP = Leader Price UC = Unit Cost (1.00) FP = Follower Price
+    FP = a + bLP
+    Profit = (LP - UC) * (2 - LP + 0.3FP)
+    Profit = (LP - 1.00) * (2 - LP + 0.3(a + bLP))
+    J(LP) = (LP - 1.00) * (2 - LP + 0.3(a + bLP))
+    LP is Max when J'(LP) = 0
+    There we can work out maximum using the following formula
+    LP = (-0.3a + 0.3b - 3) / (0.6 - 2) */
     @Override
     public float getBestPrice(Regression rModel, int day){
         float a = rModel.getA();

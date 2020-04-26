@@ -1,5 +1,5 @@
 # G20 Bot - Stackelberg Leader Bot under Imperfect Information
-## Compiling the Bot
+## Compiling the Bot: Maven Project Window
 The project is compiled and build using maven. To run from
 intellij:
 > Navigate to View | Tool Windows | Maven Projects <br> Navigate to
@@ -11,13 +11,20 @@ The following Tasks are Useful:
 > <br> Install: Packages target code into Jar File
 
 Double click each task to run it.  
-## Running the Bot: Manual Setup
-To run the bot, first set up the java rmi registry: <br><br>
-`rmiregistry &`
 
-Navigate to the g20Stackelberg Folder: <br>
+## Compiling the Bot: Terminal 
+To run the project from the terminal, run the following:
+
+`mvn clean compile install`
+
+
+## Running the Bot: Manual Setup
+To run the bot, first set up the java rmi registry FROM THE
+g20Stackelberg FOLDER: <br><br> 
 
 `cd g20Stackelberg/`
+
+`rmiregistry &`
 
 Run the Platform GUI: <br>
 

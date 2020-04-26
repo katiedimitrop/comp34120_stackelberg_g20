@@ -5,6 +5,9 @@ import comp34120.ex2.Record;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -78,7 +81,7 @@ final class Leader
 	public void startSimulation(int p_steps)
 		throws RemoteException
 	{
-		this.maximiser = new CalculusMaximiser();
+		this.maximiser = new StandardMaximiser();
 		records = new ArrayList<>();
 		// initialise records so we don't have to get the history each time
 		for(int i = 1; i <= 100; i++) {
@@ -145,6 +148,30 @@ final class Leader
 	}
 
 	public static void main(String[] args) throws RemoteException, NotBoundException{
+		List<String> argsList = new ArrayList<String>();
+		Map<String, String> optsMap = new HashMap<String, String>();
+
+		for (int i = 0; i < args.length; i++) {
+			switch (args[i].charAt(0)) {
+				case '-':
+					if (args[i].length() < 2) throw new IllegalArgumentException("Not a valid argument: "+args[i]);
+
+					if (args.length-1 == i) throw new IllegalArgumentException("Expected arg after: "+args[i]);
+						// -opt
+					optsMap.put(args[i], args[i+1]);
+					i++;
+
+					break;
+				default:
+					// arg
+					argsList.add(args[i]);
+					break;
+			}
+		}
+		optsMap.entrySet().forEach(entry->{
+			System.out.println(entry.getKey() + " : " + entry.getValue());
+		});
 		new Leader();
 	}
+
 }

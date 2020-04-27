@@ -11,14 +11,15 @@
 
         <!-- Dependency Versions -->
         <nd4j.backend>nd4j-native-platform</nd4j.backend>
-        <nd4j.version>0.9.1</nd4j.version>
-        <dl4j.version>0.9.1</dl4j.version>
-        <datavec.version>0.9.1</datavec.version>
-        <arbiter.version>0.9.1</arbiter.version>
-        <rl4j.version>0.9.1</rl4j.version>
+        <nd4j.version>1.0.0-alpha</nd4j.version>
+        <dl4j.version>1.0.0-alpha</dl4j.version>
+        <datavec.version>1.0.0-alpha</datavec.version>
+        <arbiter.version>1.0.0-alpha</arbiter.version>
+        <rl4j.version>1.0.0-alpha</rl4j.version>
         <scala.binary.version>2.11</scala.binary.version>
         <hadoop.version>2.2.0</hadoop.version>
         <java.version>1.8</java.version>
+        <maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
     </properties>
     <packaging>jar</packaging>
 
@@ -34,20 +35,41 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>comp34120.ex2.Leader</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>org/datanucleus/**</exclude>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
                 </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>comp34120.ex2.Leader</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
+
         </plugins>
     </build>
 
@@ -58,7 +80,6 @@
             <artifactId>${nd4j.backend}</artifactId>
             <version>${nd4j.version}</version>
         </dependency>
-
         <!-- DL4J Dependencies -->
         <dependency>
             <groupId>org.deeplearning4j</groupId>

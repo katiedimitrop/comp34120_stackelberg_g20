@@ -19,6 +19,7 @@ final class Leader
 	private ArrayList<Record> records;
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
 	private Maximiser maximiser;
+	private NeuralNet neuralNet;
 	/**
 	 * In the constructor, you need to call the constructor
 	 * of PlayerImpl in the first line, so that you don't need to
@@ -76,6 +77,7 @@ final class Leader
 	public void startSimulation(int p_steps)
 		throws RemoteException
 	{
+
 		this.maximiser = new CalculusMaximiser();
 		records = new ArrayList<>();
 		// initialise records so we don't have to get the history each time
@@ -83,6 +85,7 @@ final class Leader
 			Record record = m_platformStub.query(m_type, i);
 			records.add(record);
 		}
+		this.neuralNet = new NeuralNet(records);
 	}
 
 	/**

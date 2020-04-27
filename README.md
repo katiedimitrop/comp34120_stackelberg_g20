@@ -1,4 +1,10 @@
 # G20 Bot - Stackelberg Leader Bot under Imperfect Information
+
+## Information 
+In order to ensure the correct running of the program, maven shade is
+used to make an Uber Jar. This means that **the build may take a few
+minutes, and you may need to run it more than once for it to succeed**,
+so please be patient!
 ## Compiling the Bot: Maven Project Window
 The project is compiled and build using maven. To run from
 intellij:
@@ -37,7 +43,7 @@ Navigate to the target folder: <br>
 
 Run our Leader Bot: <br>
 
-`java -Djava.rmi.server.hostname=<HOST_IP> -cp g20Bot-1.0.jar
+`java -Djava.rmi.server.hostname=<HOST_IP> -cp g20Bot-1.0-shaded.jar
 comp34120.ex2.Leader`
 
 

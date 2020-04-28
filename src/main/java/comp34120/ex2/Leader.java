@@ -85,7 +85,13 @@ final class Leader
 			Record record = m_platformStub.query(m_type, i);
 			records.add(record);
 		}
-		this.neuralNet = new NeuralNet(records);
+		try {
+
+			this.neuralNet = new NeuralNet(records);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**

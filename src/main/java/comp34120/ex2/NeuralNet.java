@@ -32,6 +32,7 @@ import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.deeplearning4j.eval.Evaluation;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.api.buffer.DataBuffer;
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 //Assume follower's reaction function is of the form
 //UF = R(UL)= a + bUL
 public class NeuralNet {
@@ -115,20 +116,32 @@ public class NeuralNet {
          //rrTest.initialize(new FileSplit(new File("../Mk1_test.csv")));
          //DataSetIterator testIter = new RecordReaderDataSetIterator(rrTest,batchSize,2,2,true);
 */
-
+/*
         OutputLayer outputLayer = new OutputLayer.Builder().nIn(nHidden)
                 .nOut(numOutputs)
                 .lossFunction(LossFunctions.LossFunction.MSE)
-                .activation(Activation.IDENTITY)
+                //.activation(Activation.IDENTITY)
                 .build();
 
         DenseLayer linearLayer = new DenseLayer.Builder().nIn(numInput)
                 .nOut(nHidden)
                 .activation(Activation.IDENTITY)
                 .build();
-
+*/
         this.neuralNetwork = new MultiLayerNetwork(new NeuralNetConfiguration.Builder()
-                .seed(rngSeed)
+                        .seed(rngSeed)
+                        //.iterations(iterations)
+                        .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                        //.learningRate(learningRate)
+                        .weightInit(WeightInit.XAVIER)
+                        .updater(new Nesterovs(0.9))
+                        .list()
+                        .layer(0, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                                .activation(Activation.IDENTITY)
+                                .nIn(numInput).nOut(numOutputs).build())
+                        .pretrain(false).backprop(true).build());
+
+                /*.seed(rngSeed)
                 //.weightInit(WeightInit.XAVIER)
                 .updater(new Adam(learningRate,
                         Adam.DEFAULT_ADAM_BETA1_MEAN_DECAY,
@@ -139,7 +152,7 @@ public class NeuralNet {
                 .layer(1, outputLayer)
                 .pretrain(false)
                 .backprop(true)
-                .build());
+                .build());*/
 
         neuralNetwork.init();
 

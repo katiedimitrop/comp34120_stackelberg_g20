@@ -3,8 +3,7 @@ package comp34120.ex2;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 /**
  * A pseudo leader. The members m_platformStub and m_type are declared
@@ -18,6 +17,7 @@ final class Leader
 {
 	private ArrayList<Record> records;
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
+	private static Map<String, String> optsMap = new HashMap<String, String>();
 	private Maximiser maximiser;
 	private NeuralNet neuralNet;
 	/**
@@ -35,6 +35,16 @@ final class Leader
 		/* The first parameter *MUST* be PlayerType.LEADER, you can change
 		 * the second parameter, the name of the leader, such as "My Leader" */
 		super(PlayerType.LEADER, "G20 Leader");
+		m_platformStub.log(m_type, "Leader Created with following options: ");
+		optsMap.entrySet().forEach(entry->{
+			try {
+				m_platformStub.log(m_type,entry.getKey() + " : " + entry.getValue());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		});
+
+
 	}
 
 	/**
@@ -77,8 +87,7 @@ final class Leader
 	public void startSimulation(int p_steps)
 		throws RemoteException
 	{
-
-		this.maximiser = new CalculusMaximiser();
+		setParameters();
 		records = new ArrayList<>();
 		// initialise records so we don't have to get the history each time
 		for(int i = 1; i <= 100; i++) {
@@ -122,13 +131,10 @@ final class Leader
 			// we need to wait until now so that the follower price is updated
 			records.add(m_platformStub.query(m_type, p_date - 1));
 		}
-
 		Regression regression = new WLSRegression(records);
 		regression.estimateAB();
 		float bestPrice = maximiser.getBestPrice(regression, p_date);
-
 		m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
-
 		this.m_platformStub.publishPrice(m_type, bestPrice);
 	}
 
@@ -146,6 +152,44 @@ final class Leader
 	}
 
 	public static void main(String[] args) throws RemoteException, NotBoundException{
+		setArgs(args);
 		new Leader();
+	}
+
+	private static void setArgs(String[] args) {
+		for (int i = 0; i < args.length; i++) {
+			switch (args[i].charAt(0)) {
+				case '-':
+					if (args[i].length() < 2) throw new IllegalArgumentException("Not a valid argument: "+args[i]);
+					if (args.length-1 == i) throw new IllegalArgumentException("Expected arg after: "+args[i]);
+					optsMap.put(args[i].replace("-", ""), args[i+1]);
+					i++;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	private void setParameters() throws RemoteException {
+		String regressionOption = optsMap.getOrDefault("R", "default");
+		String maximiserOption = optsMap.getOrDefault("M", "default");
+		m_platformStub.log(m_type,"REGRESSION: " + regressionOption);
+		setRegression(regressionOption);
+		setMaximiser(maximiserOption);
+	}
+
+	private void setMaximiser(String maximiserOption) throws RemoteException {
+		switch(maximiserOption.toUpperCase()){
+			case("CALCULUS"):
+				this.maximiser = new CalculusMaximiser();
+			default:
+				this.maximiser = new CalculusMaximiser();
+		}
+		m_platformStub.log(m_type,"MAXIMISER SET TO: " + maximiser.getClass().getSimpleName());
+
+	}
+
+	private void setRegression(String regressionOption) {
 	}
 }

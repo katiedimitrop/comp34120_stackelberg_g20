@@ -56,4 +56,22 @@ Run the bash command:
 
 `sh run_bot.sh`
 
+## Optional Commands
+To alter the bots behaviour, use the following flags:
+
+### Maximiser
+Use the flag `-m` to change the maximiser. The following are
+implemented:
+
+`-m Calculus` : Calculus Maximiser that works out Maximum price based on
+the maximum value from a quadratic graph, with values a and b.
+
+`default` : If an unknown maximiser is specified, or none are specified,
+the `Calculus Maximiser` is used.
+
+### Regression
+Use the flag `-r` to change the maximiser. The following are
+implemented:
+
+
 

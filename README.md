@@ -73,5 +73,17 @@ the `Calculus Maximiser` is used.
 Use the flag `-r` to change the maximiser. The following are
 implemented:
 
+## Known Issues
+
+### Maven Cannot Resolve Dependencies
+This is an issue caused by maven caching. To solve this, navigate to
+your m2 folder, usua:
+
+`~/.m2/repository`
+
+Delete the folders causing the clash. If there a number of clashes, you
+may want to remove the entire repository folder. In IntelliJ, navigate
+to the Maven window and press the "Download Sources Folder'. Once this
+have finished, rebuild the project.
 
 

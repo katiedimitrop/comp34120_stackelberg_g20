@@ -3,6 +3,8 @@ import java.util.ArrayList;
 
 public class WLSRegression extends Regression {
 
+  final double FORGETTING_FACTOR = 0.95;
+
   public WLSRegression(ArrayList<Record> records) {
     super(records);
   }
@@ -15,11 +17,13 @@ public class WLSRegression extends Regression {
     float sumY = 0;
     float sumXY = 0;
 
-    for(Record record: records) {
-      sumX += record.m_leaderPrice;
-      sumY += record.m_followerPrice;
-      sumXSquared += record.m_leaderPrice * record.m_leaderPrice;
-      sumXY += record.m_leaderPrice * record.m_followerPrice;
+    for(int i = 0; i < records.size(); i++) {
+      Record record = records.get(i);
+      double forgetting = Math.pow(FORGETTING_FACTOR, records.size() - i);
+      sumX += forgetting * record.m_leaderPrice;
+      sumY += forgetting * record.m_followerPrice;
+      sumXSquared += forgetting * record.m_leaderPrice * record.m_leaderPrice;
+      sumXY += forgetting * record.m_leaderPrice * record.m_followerPrice;
     }
 
     a = ((sumXSquared * sumY) - (sumX * sumXY)) / ((records.size() * sumXSquared) - (sumX * sumX));

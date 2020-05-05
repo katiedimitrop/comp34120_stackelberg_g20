@@ -11,12 +11,11 @@
 
         <!-- Dependency Versions -->
         <nd4j.backend>nd4j-native-platform</nd4j.backend>
-        <nd4j.version>1.0.0-alpha</nd4j.version>
-        <dl4j.version>1.0.0-alpha</dl4j.version>
-        <datavec.version>1.0.0-alpha</datavec.version>
-        <arbiter.version>1.0.0-alpha</arbiter.version>
-        <rl4j.version>1.0.0-alpha</rl4j.version>
-        <scala.binary.version>2.11</scala.binary.version>
+        <nd4j.version>1.0.0-beta6</nd4j.version>
+        <dl4j.version>1.0.0-beta6</dl4j.version>
+        <datavec.version>1.0.0-beta6</datavec.version>
+        <arbiter.version>1.0.0-beta6</arbiter.version>
+        <rl4j.version>1.0.0-beta66</rl4j.version>
         <hadoop.version>2.2.0</hadoop.version>
         <java.version>1.8</java.version>
         <maven-shade-plugin.version>3.2.1</maven-shade-plugin.version>
@@ -98,12 +97,12 @@
         </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-ui_${scala.binary.version}</artifactId>
+            <artifactId>deeplearning4j-ui</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
-            <artifactId>deeplearning4j-parallel-wrapper_${scala.binary.version}</artifactId>
+            <artifactId>deeplearning4j-parallel-wrapper</artifactId>
             <version>${dl4j.version}</version>
         </dependency>
         <dependency>
@@ -113,7 +112,7 @@
         </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
-            <artifactId>arbiter-ui_2.11</artifactId>
+            <artifactId>arbiter-ui</artifactId>
             <version>${arbiter.version}</version>
         </dependency>
 

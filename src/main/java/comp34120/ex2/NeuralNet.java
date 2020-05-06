@@ -139,7 +139,7 @@ public class NeuralNet {
                         .layer(0, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                                 .activation(Activation.IDENTITY)
                                 .nIn(numInput).nOut(numOutputs).build())
-                        .pretrain(false).backprop(true).build());
+                        .build());
 
                 /*.seed(rngSeed)
                 //.weightInit(WeightInit.XAVIER)

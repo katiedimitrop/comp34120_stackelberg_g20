@@ -29,4 +29,9 @@ public class WLSRegression extends Regression {
     a = ((sumXSquared * sumY) - (sumX * sumXY)) / ((records.size() * sumXSquared) - (sumX * sumX));
     b = ((records.size() * sumXY) - (sumX * sumY)) / ((records.size() * sumXSquared) - (sumX * sumX));
   }
+
+  public float estimateFollowerPrice(float lPrice){
+    return getA() + (lPrice * getB());
+  }
+
 }

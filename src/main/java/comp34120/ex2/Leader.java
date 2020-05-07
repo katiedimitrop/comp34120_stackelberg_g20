@@ -186,9 +186,14 @@ final class Leader
 	}
 
 	private void setMaximiser(String maximiserOption) throws RemoteException {
+		m_platformStub.log(m_type, "OPTION: " + maximiserOption);
 		switch(maximiserOption.toUpperCase()){
-			case("CALCULUS"):
+			case "CALCULUS":
 				this.maximiser = new CalculusMaximiser();
+				break;
+			case "STANDARD":
+				this.maximiser = new StandardMaximiser();
+				break;
 			default:
 				this.maximiser = new CalculusMaximiser();
 		}
@@ -197,5 +202,6 @@ final class Leader
 	}
 
 	private void setRegression(String regressionOption) {
+		//TODO: IMPLEMENT MORE REGRESSION OPTIONS
 	}
 }

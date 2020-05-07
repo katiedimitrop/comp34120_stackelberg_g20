@@ -66,6 +66,10 @@ implemented:
 `-m Calculus` : Calculus Maximiser that works out Maximum price based on
 the maximum value from a quadratic graph, with values a and b.
 
+`-m Standard` : Standard Maximiser estimates the best price by working
+out the estimated profit for a range of leader prices, and then chooses
+the price with the maximum estimated profit
+
 `default` : If an unknown maximiser is specified, or none are specified,
 the `Calculus Maximiser` is used.
 

@@ -19,7 +19,7 @@ final class Leader
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
 	private static Map<String, String> optsMap = new HashMap<String, String>();
 	private Maximiser maximiser;
-	private NeuralNet neuralNet;
+
 	/**
 	 * In the constructor, you need to call the constructor
 	 * of PlayerImpl in the first line, so that you don't need to
@@ -94,12 +94,6 @@ final class Leader
 			Record record = m_platformStub.query(m_type, i);
 			records.add(record);
 		}
-		try {
-
-			this.neuralNet = new NeuralNet(records);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
 	}
 
@@ -130,17 +124,27 @@ final class Leader
 	 */
 	@Override
 	public void proceedNewDay(int p_date)
-		throws RemoteException
+			throws Exception
 	{
 		if(p_date > 101) {
 			// Add the record from previous day
 			// we need to wait until now so that the follower price is updated
 			records.add(m_platformStub.query(m_type, p_date - 1));
 		}
-		Regression regression = new WLSRegression(records);
-		regression.estimateAB();
-		float bestPrice = maximiser.getBestPrice(regression, p_date);
-		m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
+
+		//If using linear Regression implemented with WLS
+		//Regression regression = new WLSRegression(records);
+		//regression.estimateAB();
+		//float bestPrice = maximiser.getBestPrice(regression, p_date);
+		//m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
+
+		//If using linear Regression implemented with NeuralNet
+		Regression linearNN = new NeuralNet(records);
+		linearNN.estimateAB();
+		float bestPrice = maximiser.getBestPrice(linearNN, p_date);
+		m_platformStub.log(m_type, "Estimate: " + linearNN.getFollowerPrice(bestPrice));
+
+
 		this.m_platformStub.publishPrice(m_type, bestPrice);
 	}
 

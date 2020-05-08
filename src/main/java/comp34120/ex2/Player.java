@@ -23,5 +23,5 @@ public interface Player
 		throws RemoteException;
 
 	public void proceedNewDay(final int p_date)
-		throws RemoteException;
+            throws Exception;
 }

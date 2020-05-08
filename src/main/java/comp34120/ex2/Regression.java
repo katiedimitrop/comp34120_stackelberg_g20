@@ -22,9 +22,7 @@ public abstract class Regression {
     return a;
   }
 
-  public float getB() {
-    return b;
-  }
+  public float getB() { return b; }
 
   @Override
   public String toString() {

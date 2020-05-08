@@ -16,6 +16,7 @@ final class Leader
 	extends PlayerImpl
 {
 	private ArrayList<Record> records;
+	private final int WINDOW_SIZE = 40;
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
 	private static Map<String, String> optsMap = new HashMap<String, String>();
 	private Maximiser maximiser;
@@ -137,16 +138,11 @@ final class Leader
 			// we need to wait until now so that the follower price is updated
 			records.add(m_platformStub.query(m_type, p_date - 1));
 		}
-		Regression regression = new WLSRegression(records);
+		Regression regression = new WLSRegression(new ArrayList<>(records.subList(p_date - WINDOW_SIZE - 1, p_date - 1)));
 		regression.estimateAB();
 		float bestPrice = maximiser.getBestPrice(regression, p_date);
 		m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
 		this.m_platformStub.publishPrice(m_type, bestPrice);
-	}
-
-
-	private float genPrice(float p_mean, float p_diversity) {
-		return (float)((double)p_mean + this.m_randomizer.nextGaussian() * (double)p_diversity);
 	}
 
 	private float demand(float leader, float follower) {

@@ -16,6 +16,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
+//Network learning rate
 
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
 import org.nd4j.linalg.activations.Activation;
@@ -46,18 +47,23 @@ public class NeuralNet extends Regression  {
     private INDArray constFeature;
     private DataSet allData;
     int rngSeed = 123; // random number seed for reproducibility
-    private static final int nEpochs = 100;
-    private static final double learningRate = 0.00002;
+    private static final int nEpochs = 51;
+    private static final double learningRate = 0.09;
     private static final int numInput = 1;
     private static final int numOutputs = 1;
-    private static final int nHidden = 1;
 
-
+    //for normalization
+    private static double maxLeaderPrice = 0.0;
+    private static double  minLeaderPrice = 3.0;
+    private static double maxFollowerPrice = 0.0;
+    private static double  minFollowerPrice = 3.0;
     //Number of samples per gradient update.
     private static final int batchSize = 40;
 
+    //initialize the neural network object and architecture
     private final MultiLayerNetwork neuralNetwork;
 
+    //This function sets the records
     public NeuralNet(ArrayList<Record> records) throws Exception {
         super(records);
         int recordsLength = records.size();
@@ -66,9 +72,16 @@ public class NeuralNet extends Regression  {
         double[] lPrices = new double[recordsLength];
         double[] fOutputs = new double[recordsLength];
         double[] constFeatureArr = new double[recordsLength];
-
         int count = 0;
         for (Record r : records) {
+            if (r.m_leaderPrice >= maxLeaderPrice)
+                maxLeaderPrice = r.m_leaderPrice;
+            if (r.m_leaderPrice < minLeaderPrice)
+                minLeaderPrice = r.m_leaderPrice;
+            if (r.m_followerPrice >= maxFollowerPrice)
+                maxFollowerPrice = r.m_followerPrice;
+            if (r.m_followerPrice < minFollowerPrice)
+                minFollowerPrice = r.m_followerPrice;
             lPrices[count] = r.m_leaderPrice;
             fOutputs[count] = r.m_followerPrice;
             days[count] = r.m_date / DATE_SCALE;
@@ -80,31 +93,27 @@ public class NeuralNet extends Regression  {
         this.followerPriceFeature = Nd4j.create(fOutputs, shapeArray);
         this.dateFeature = Nd4j.create(days, shapeArray);
         this.leaderPriceFeature = Nd4j.create(lPrices, shapeArray);
-        this.constFeature = Nd4j.create(constFeatureArr, shapeArray);
-        //stack two arrays horizontally
-        this.inputData = Nd4j.hstack(leaderPriceFeature, constFeature);
-
         this.allData = new DataSet(leaderPriceFeature, followerPriceFeature);
-
 
         this.neuralNetwork = new MultiLayerNetwork(new NeuralNetConfiguration.Builder()
                 .seed(rngSeed)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .weightInit(WeightInit.XAVIER)
+                .weightInit(WeightInit.ZERO)
+                //removing this worsens performance significantly
                 .updater(new Nesterovs(0.9))
                 .list()
                 .layer(0, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation(Activation.IDENTITY)
                         .nIn(numInput).nOut(numOutputs).build())
                 .build());
-
-
-
+        neuralNetwork.init();
     }//constructor
 
+    //This function trains the neural network on the current record and sets a and b based on the
+    //result
     @Override
     public void estimateAB() {
-        neuralNetwork.init();
+
         DataSetIterator allDataIterator = new ListDataSetIterator<>(allData.asList());
 
         neuralNetwork.setListeners(new ScoreIterationListener(1));
@@ -130,13 +139,51 @@ public class NeuralNet extends Regression  {
             weights_and_biases[index] = values.getFloat(0);
             index = index +1;
         }
-        //the weight
+        //The weight is stored first
         b = weights_and_biases[0];
-        //the bias
+        //then the bias
         a = weights_and_biases[1];
-        System.out.println("Linear NN a:" +a);
-        System.out.println("Linear NN b:" +b);
+        //System.out.println("Linear NN a:" +a);
+        //System.out.println("Linear NN b:" +b);
+        System.out.println("R(X) = " +b+"X"+" + "+a);
         System.out.println("****************Simulation day finished********************");
+    }
+    public void evaluate() {
+        System.out.println("Evaluating Linear NN: ");
+    }
+    @Override
+    public void updateRecords(ArrayList<Record> records) {
+        System.out.println("Updating NN records: ");
+        //temporary variables
+        int recordsLength = records.size();
+        int[] shapeArray = new int[]{recordsLength, 1};
+        double[] days = new double[recordsLength];
+        double[] lPrices = new double[recordsLength];
+        double[] fOutputs = new double[recordsLength];
+        double[] constFeatureArr = new double[recordsLength];
+        int count = 0;
+        for (Record r : records) {
+            if (r.m_leaderPrice >= maxLeaderPrice)
+                maxLeaderPrice = r.m_leaderPrice;
+            if (r.m_leaderPrice < minLeaderPrice)
+                minLeaderPrice = r.m_leaderPrice;
+            if (r.m_followerPrice >= maxFollowerPrice)
+                maxFollowerPrice = r.m_followerPrice;
+            if (r.m_followerPrice < minFollowerPrice)
+                minFollowerPrice = r.m_followerPrice;
+            lPrices[count] = r.m_leaderPrice;
+            fOutputs[count] = r.m_followerPrice;
+            days[count] = r.m_date / DATE_SCALE;
+            constFeatureArr[count] = 1;
+            count++;
+        }
+
+        //Convert temporary array representations to nd4j arrays
+        this.followerPriceFeature = Nd4j.create(fOutputs, shapeArray);
+        this.dateFeature = Nd4j.create(days, shapeArray);
+        this.leaderPriceFeature = Nd4j.create(lPrices, shapeArray);
+        this.allData = new DataSet(leaderPriceFeature, followerPriceFeature);
+
     }
 }//class
 

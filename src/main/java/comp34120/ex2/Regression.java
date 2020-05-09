@@ -31,4 +31,5 @@ public abstract class Regression {
       ", b=" + b +
       '}';
   }
+  public void updateRecords(ArrayList<Record> records) { }
 }

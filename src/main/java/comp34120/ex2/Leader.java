@@ -13,12 +13,13 @@ import java.util.*;
  * @author Xin
  */
 final class Leader
-	extends PlayerImpl
+		extends PlayerImpl
 {
 	private ArrayList<Record> records;
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
 	private static Map<String, String> optsMap = new HashMap<String, String>();
 	private Maximiser maximiser;
+	private Regression linearNN;
 
 	/**
 	 * In the constructor, you need to call the constructor
@@ -30,7 +31,7 @@ final class Leader
 	 * @throws NotBoundException
 	 */
 	Leader()
-		throws RemoteException, NotBoundException
+			throws RemoteException, NotBoundException
 	{
 		/* The first parameter *MUST* be PlayerType.LEADER, you can change
 		 * the second parameter, the name of the leader, such as "My Leader" */
@@ -56,7 +57,7 @@ final class Leader
 	 */
 	@Override
 	public void checkConnection()
-		throws RemoteException
+			throws RemoteException
 	{
 		super.checkConnection();
 		//TO DO: delete the line above and put your own code here
@@ -70,7 +71,7 @@ final class Leader
 	 */
 	@Override
 	public void goodbye()
-		throws RemoteException
+			throws RemoteException
 	{
 		super.goodbye();
 		//TO DO: delete the line above and put your own exit code here
@@ -85,7 +86,7 @@ final class Leader
 	 */
 	@Override
 	public void startSimulation(int p_steps)
-		throws RemoteException
+			throws Exception, RemoteException
 	{
 		setParameters();
 		records = new ArrayList<>();
@@ -95,6 +96,11 @@ final class Leader
 			records.add(record);
 		}
 
+		//Initialize neural network on historical data
+		linearNN = new NeuralNet(records);
+		System.out.println("Reaction function learned from historical data: ");
+		//estimate initial R(Ul)
+		linearNN.estimateAB();
 	}
 
 	/**
@@ -105,7 +111,7 @@ final class Leader
 	 */
 	@Override
 	public void endSimulation()
-		throws RemoteException
+			throws RemoteException
 	{
 		// add the last record
 		records.add(m_platformStub.query(m_type, records.size() + 1));
@@ -139,7 +145,7 @@ final class Leader
 		//m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
 
 		//If using linear Regression implemented with NeuralNet
-		Regression linearNN = new NeuralNet(records);
+		linearNN.updateRecords(records);
 		linearNN.estimateAB();
 		float bestPrice = maximiser.getBestPrice(linearNN, p_date);
 		m_platformStub.log(m_type, "Estimate: " + linearNN.getFollowerPrice(bestPrice));

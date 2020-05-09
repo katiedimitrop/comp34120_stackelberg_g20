@@ -123,7 +123,6 @@ final class Leader
 			total += calculateProfit(record.m_leaderPrice, record.m_followerPrice);
 		}
 		m_platformStub.log(m_type, "Total Profit: " + total);
-		//linearNN.evaluate();
 	}
 
 	/**
@@ -148,7 +147,7 @@ final class Leader
 		//m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
 
 		//If using linear Regression implemented with NeuralNet
-		//A new reaction function is calculated every 10 new days, to speed up training
+		//A new reaction function is calculated every 5 new days, to speed up training
 		if (p_date == 105 || p_date == 110 || p_date == 115 || p_date == 120 || p_date == 125 ||  p_date == 130 )
 		{
 			linearNN.updateRecords(records);

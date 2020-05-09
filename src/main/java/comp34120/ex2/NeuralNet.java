@@ -125,7 +125,7 @@ public class NeuralNet extends Regression  {
         a = weights_and_biases[1];
         //System.out.println("Linear NN a:" +a);
         //System.out.println("Linear NN b:" +b);
-        System.out.println("R(X) = " +b+"X"+" + "+a);
+        //System.out.println("R(X) = " +b+"X"+" + "+a);
 
         System.out.println("****************Simulation day finished********************");
     }

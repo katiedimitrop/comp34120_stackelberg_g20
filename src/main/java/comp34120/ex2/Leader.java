@@ -21,6 +21,7 @@ final class Leader
 	private static Map<String, String> optsMap = new HashMap<String, String>();
 	private Maximiser maximiser;
 	private NeuralNet neuralNet;
+	private Regression regression;
 	/**
 	 * In the constructor, you need to call the constructor
 	 * of PlayerImpl in the first line, so that you don't need to
@@ -96,12 +97,10 @@ final class Leader
 			records.add(record);
 		}
 		try {
-
 			this.neuralNet = new NeuralNet(records);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -138,7 +137,7 @@ final class Leader
 			// we need to wait until now so that the follower price is updated
 			records.add(m_platformStub.query(m_type, p_date - 1));
 		}
-		Regression regression = new WLSRegression(new ArrayList<>(records.subList(p_date - WINDOW_SIZE - 1, p_date - 1)));
+		regression.setRecords(new ArrayList<>(records.subList(p_date - WINDOW_SIZE - 1, p_date - 1)));
 		regression.estimateAB();
 		float bestPrice = maximiser.getBestPrice(regression, p_date);
 		m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
@@ -198,6 +197,10 @@ final class Leader
 	}
 
 	private void setRegression(String regressionOption) {
-		//TODO: IMPLEMENT MORE REGRESSION OPTIONS
+		switch(regressionOption.toUpperCase()){
+			case "WLS":
+			default:
+				this.regression = new WLSRegression();
+		}
 	}
 }

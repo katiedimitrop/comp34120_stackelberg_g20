@@ -69,7 +69,7 @@ public abstract class PlayerImpl
 	 */
 	@Override
 	public void startSimulation(int p_steps)
-            throws Exception
+            throws Exception,RemoteException
 	{
 		m_platformStub.log(m_type, "startSimulation(): Not supported yet.");
 	}

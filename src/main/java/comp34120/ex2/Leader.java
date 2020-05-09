@@ -100,7 +100,9 @@ final class Leader
 		linearNN = new NeuralNet(records);
 		System.out.println("Reaction function learned from historical data: ");
 		//estimate initial R(Ul)
+
 		linearNN.estimateAB();
+
 	}
 
 	/**
@@ -121,6 +123,7 @@ final class Leader
 			total += calculateProfit(record.m_leaderPrice, record.m_followerPrice);
 		}
 		m_platformStub.log(m_type, "Total Profit: " + total);
+		//linearNN.evaluate();
 	}
 
 	/**
@@ -145,13 +148,18 @@ final class Leader
 		//m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
 
 		//If using linear Regression implemented with NeuralNet
-		linearNN.updateRecords(records);
-		linearNN.estimateAB();
+		//A new reaction function is calculated every 10 new days, to speed up training
+		if (p_date == 105 || p_date == 110 || p_date == 115 || p_date == 120 || p_date == 125 ||  p_date == 130 )
+		{
+			linearNN.updateRecords(records);
+			linearNN.estimateAB();
+		}
 		float bestPrice = maximiser.getBestPrice(linearNN, p_date);
 		m_platformStub.log(m_type, "Estimate: " + linearNN.getFollowerPrice(bestPrice));
 
 
 		this.m_platformStub.publishPrice(m_type, bestPrice);
+
 	}
 
 

@@ -138,11 +138,12 @@ final class Leader
 
 		if(regression.getClass().getSimpleName() == "WLSRegression")
 		{
-			regression.updateRecords(records);
+			regression.setRecords(records);
 			regression.estimateAB();
+
 		}
 		else{
-			regression.setRecords(records);
+			regression.updateRecords(records);
 			regression.estimateAB();
 		}
 		float bestPrice = maximiser.getBestPrice(regression, p_date);

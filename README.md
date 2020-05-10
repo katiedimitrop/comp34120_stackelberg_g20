@@ -77,9 +77,9 @@ the `Calculus Maximiser` is used.
 Use the flag `-r` to change the maximiser. The following are
 implemented:
 
-`-m WLS` : Weighted Least Square Regression
+`-r WLS` : Weighted Least Square Regression
 
-`-m NeuralNetLinear` : Linear Regression using Neural Net Learning
+`-r NeuralNetLinear` : Linear Regression using Neural Net Learning
 
 `default` : If an unknown regression is specified, or none are
 specified, the `WLS` is used.

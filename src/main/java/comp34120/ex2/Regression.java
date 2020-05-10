@@ -21,13 +21,9 @@ public abstract class Regression {
     return a + (b * leaderPrice);
   }
 
-  public float getA() {
-    return a;
-  }
+  public float getA() { return a; }
 
-  public float getB() {
-    return b;
-  }
+  public float getB() { return b; }
 
   public void setRecords(ArrayList<Record> records) {
     this.records = records;
@@ -40,4 +36,7 @@ public abstract class Regression {
       ", b=" + b +
       '}';
   }
+  public void updateRecords(ArrayList<Record> records) { }
+
 }
+

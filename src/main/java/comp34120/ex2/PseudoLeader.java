@@ -68,7 +68,7 @@ final class PseudoLeader
 	 */
 	@Override
 	public void startSimulation(int p_steps)
-		throws RemoteException
+			throws Exception, RemoteException
 	{
 		super.startSimulation(p_steps);
 		//TO DO: delete the line above and put your own initialization code here

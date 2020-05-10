@@ -13,15 +13,15 @@ import java.util.*;
  * @author Xin
  */
 final class Leader
-	extends PlayerImpl
+		extends PlayerImpl
 {
 	private ArrayList<Record> records;
 	private final int WINDOW_SIZE = 40;
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
 	private static Map<String, String> optsMap = new HashMap<String, String>();
 	private Maximiser maximiser;
-	private NeuralNet neuralNet;
-	private Regression regression;
+	private Regression linearNN;
+
 	/**
 	 * In the constructor, you need to call the constructor
 	 * of PlayerImpl in the first line, so that you don't need to
@@ -32,7 +32,7 @@ final class Leader
 	 * @throws NotBoundException
 	 */
 	Leader()
-		throws RemoteException, NotBoundException
+			throws RemoteException, NotBoundException
 	{
 		/* The first parameter *MUST* be PlayerType.LEADER, you can change
 		 * the second parameter, the name of the leader, such as "My Leader" */
@@ -58,7 +58,7 @@ final class Leader
 	 */
 	@Override
 	public void checkConnection()
-		throws RemoteException
+			throws RemoteException
 	{
 		super.checkConnection();
 		//TO DO: delete the line above and put your own code here
@@ -72,7 +72,7 @@ final class Leader
 	 */
 	@Override
 	public void goodbye()
-		throws RemoteException
+			throws RemoteException
 	{
 		super.goodbye();
 		//TO DO: delete the line above and put your own exit code here
@@ -87,7 +87,7 @@ final class Leader
 	 */
 	@Override
 	public void startSimulation(int p_steps)
-		throws RemoteException
+			throws Exception, RemoteException
 	{
 		setParameters();
 		records = new ArrayList<>();
@@ -96,11 +96,14 @@ final class Leader
 			Record record = m_platformStub.query(m_type, i);
 			records.add(record);
 		}
-		try {
-			this.neuralNet = new NeuralNet(records);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		//Initialize neural network on historical data
+		linearNN = new NeuralNet(records);
+		System.out.println("Reaction function learned from historical data: ");
+		//estimate initial R(Ul)
+
+		linearNN.estimateAB();
+
 	}
 
 	/**
@@ -111,7 +114,7 @@ final class Leader
 	 */
 	@Override
 	public void endSimulation()
-		throws RemoteException
+			throws RemoteException
 	{
 		// add the last record
 		records.add(m_platformStub.query(m_type, records.size() + 1));
@@ -130,18 +133,33 @@ final class Leader
 	 */
 	@Override
 	public void proceedNewDay(int p_date)
-		throws RemoteException
+			throws Exception
 	{
 		if(p_date > 101) {
 			// Add the record from previous day
 			// we need to wait until now so that the follower price is updated
 			records.add(m_platformStub.query(m_type, p_date - 1));
 		}
-		regression.setRecords(new ArrayList<>(records.subList(p_date - WINDOW_SIZE - 1, p_date - 1)));
-		regression.estimateAB();
-		float bestPrice = maximiser.getBestPrice(regression, p_date);
-		m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
+
+		//If using linear Regression implemented with WLS
+		//Regression regression = new WLSRegression(records);
+		//regression.estimateAB();
+		//float bestPrice = maximiser.getBestPrice(regression, p_date);
+		//m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
+
+		//If using linear Regression implemented with NeuralNet
+		//A new reaction function is calculated every 5 new days, to speed up training
+		if (p_date == 105 || p_date == 110 || p_date == 115 || p_date == 120 || p_date == 125 ||  p_date == 130 )
+		{
+			linearNN.updateRecords(records);
+			linearNN.estimateAB();
+		}
+		float bestPrice = maximiser.getBestPrice(linearNN, p_date);
+		m_platformStub.log(m_type, "Estimate: " + linearNN.getFollowerPrice(bestPrice));
+
+
 		this.m_platformStub.publishPrice(m_type, bestPrice);
+
 	}
 
 	private float demand(float leader, float follower) {

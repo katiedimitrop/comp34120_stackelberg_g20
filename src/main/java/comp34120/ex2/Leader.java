@@ -136,7 +136,7 @@ final class Leader
 		}
 
 
-		if(regression.getClass().getSimpleName() == "NeuralNet")
+		if(regression.getClass().getSimpleName() == "WLSRegression")
 		{
 			regression.updateRecords(records);
 			regression.estimateAB();
@@ -213,10 +213,10 @@ final class Leader
 				regression.estimateAB();
 				break;
 			case "WLS":
-				break;
+				this.regression = new WLSRegression();
 			default:
 				this.regression = new WLSRegression();
 		}
-		m_platformStub.log(m_type,"REGRESSION SET TO: " + regression.getClass().getSimpleName());
+
 	}
 }

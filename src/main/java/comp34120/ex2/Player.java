@@ -17,7 +17,7 @@ public interface Player
 		throws RemoteException;
 
 	public void startSimulation(final int p_steps)
-		throws RemoteException;
+            throws Exception,RemoteException;
 
 	public void endSimulation()
 		throws RemoteException;

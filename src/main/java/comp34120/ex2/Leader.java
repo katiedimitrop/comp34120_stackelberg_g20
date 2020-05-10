@@ -20,7 +20,7 @@ final class Leader
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
 	private static Map<String, String> optsMap = new HashMap<String, String>();
 	private Maximiser maximiser;
-	private Regression linearNN;
+	private Regression regression;
 
 	/**
 	 * In the constructor, you need to call the constructor
@@ -89,21 +89,15 @@ final class Leader
 	public void startSimulation(int p_steps)
 			throws Exception, RemoteException
 	{
-		setParameters();
+
 		records = new ArrayList<>();
 		// initialise records so we don't have to get the history each time
 		for(int i = 1; i <= 100; i++) {
 			Record record = m_platformStub.query(m_type, i);
 			records.add(record);
 		}
-
+		setParameters();
 		//Initialize neural network on historical data
-		linearNN = new NeuralNet(records);
-		System.out.println("Reaction function learned from historical data: ");
-		//estimate initial R(Ul)
-
-		linearNN.estimateAB();
-
 	}
 
 	/**
@@ -141,21 +135,21 @@ final class Leader
 			records.add(m_platformStub.query(m_type, p_date - 1));
 		}
 
-		//If using linear Regression implemented with WLS
-		//Regression regression = new WLSRegression(records);
-		//regression.estimateAB();
-		//float bestPrice = maximiser.getBestPrice(regression, p_date);
-		//m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
 
 		//If using linear Regression implemented with NeuralNet
 		//A new reaction function is calculated every 5 new days, to speed up training
-		if (p_date == 105 || p_date == 110 || p_date == 115 || p_date == 120 || p_date == 125 ||  p_date == 130 )
-		{
-			linearNN.updateRecords(records);
-			linearNN.estimateAB();
+		if(regression.getClass().getSimpleName() == "NeuralNet") {
+			if (p_date == 105 || p_date == 110 || p_date == 115 || p_date == 120 || p_date == 125 || p_date == 130) {
+				regression.updateRecords(records);
+				regression.estimateAB();
+			}
 		}
-		float bestPrice = maximiser.getBestPrice(linearNN, p_date);
-		m_platformStub.log(m_type, "Estimate: " + linearNN.getFollowerPrice(bestPrice));
+		else{
+			regression.setRecords(records);
+			regression.estimateAB();
+		}
+		float bestPrice = maximiser.getBestPrice(regression, p_date);
+		m_platformStub.log(m_type, "Estimate: " + regression.getFollowerPrice(bestPrice));
 
 
 		this.m_platformStub.publishPrice(m_type, bestPrice);
@@ -190,7 +184,7 @@ final class Leader
 		}
 	}
 
-	private void setParameters() throws RemoteException {
+	private void setParameters() throws Exception {
 		String regressionOption = optsMap.getOrDefault("R", "default");
 		String maximiserOption = optsMap.getOrDefault("M", "default");
 		m_platformStub.log(m_type,"REGRESSION: " + regressionOption);
@@ -214,11 +208,18 @@ final class Leader
 
 	}
 
-	private void setRegression(String regressionOption) {
+	private void setRegression(String regressionOption) throws Exception {
 		switch(regressionOption.toUpperCase()){
+			case "NEURALNETLINEAR":
+				this.regression = new NeuralNet(records);
+				System.out.println("Reaction function learned from historical data: ");
+				regression.estimateAB();
+				break;
 			case "WLS":
+				break;
 			default:
 				this.regression = new WLSRegression();
 		}
+		m_platformStub.log(m_type,"REGRESSION SET TO: " + regression.getClass().getSimpleName());
 	}
 }

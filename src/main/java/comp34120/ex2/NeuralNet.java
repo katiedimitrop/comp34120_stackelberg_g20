@@ -141,16 +141,13 @@ public class NeuralNet extends Regression  {
         double[] fOutputs = new double[recordsLength];
 
         int count = 0;
-        for (Record r : records) {
-            //if (r.m_date >= (recordsLength - 80))
-            //{
-                //System.out.println("day"+r.m_date);
-                lPrices[count] = r.m_leaderPrice;
-                fOutputs[count] = r.m_followerPrice;
-                days[count] = r.m_date / DATE_SCALE;
-                count++;
-           // }
-
+        for (Record r : records)
+        {
+            //System.out.println("day"+r.m_date);
+            lPrices[count] = r.m_leaderPrice;
+            fOutputs[count] = r.m_followerPrice;
+            days[count] = r.m_date / DATE_SCALE;
+            count++;
         }
 
         //Convert temporary array representations to nd4j arrays

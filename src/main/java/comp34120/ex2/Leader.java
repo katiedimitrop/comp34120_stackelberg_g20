@@ -136,13 +136,10 @@ final class Leader
 		}
 
 
-		//If using linear Regression implemented with NeuralNet
-		//A new reaction function is calculated every 5 new days, to speed up training
-		if(regression.getClass().getSimpleName() == "NeuralNet") {
-			if (p_date == 105 || p_date == 110 || p_date == 115 || p_date == 120 || p_date == 125 || p_date == 130) {
-				regression.updateRecords(records);
-				regression.estimateAB();
-			}
+		if(regression.getClass().getSimpleName() == "NeuralNet")
+		{
+			regression.updateRecords(records);
+			regression.estimateAB();
 		}
 		else{
 			regression.setRecords(records);

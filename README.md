@@ -60,13 +60,13 @@ Run the bash command:
 To alter the bots behaviour, use the following flags:
 
 ### Maximiser
-Use the flag `-m` to change the maximiser. The following are
+Use the flag `-M` to change the maximiser. The following are
 implemented:
 
-`-m Calculus` : Calculus Maximiser that works out Maximum price based on
+`-M Calculus` : Calculus Maximiser that works out Maximum price based on
 the maximum value from a quadratic graph, with values a and b.
 
-`-m Standard` : Standard Maximiser estimates the best price by working
+`-M Standard` : Standard Maximiser estimates the best price by working
 out the estimated profit for a range of leader prices, and then chooses
 the price with the maximum estimated profit
 
@@ -74,12 +74,12 @@ the price with the maximum estimated profit
 the `Calculus Maximiser` is used.
 
 ### Regression
-Use the flag `-r` to change the maximiser. The following are
+Use the flag `-R` to change the maximiser. The following are
 implemented:
 
-`-r WLS` : Weighted Least Square Regression
+`-R WLS` : Weighted Least Square Regression
 
-`-r NeuralNetLinear` : Linear Regression using Neural Net Learning
+`-R NeuralNetLinear` : Linear Regression using Neural Net Learning
 
 `default` : If an unknown regression is specified, or none are
 specified, the `WLS` is used.

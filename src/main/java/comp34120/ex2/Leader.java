@@ -16,6 +16,7 @@ final class Leader
 		extends PlayerImpl
 {
 	private ArrayList<Record> records;
+	private final int WINDOW_SIZE = 40;
 	private final Random m_randomizer = new Random(System.currentTimeMillis());
 	private static Map<String, String> optsMap = new HashMap<String, String>();
 	private Maximiser maximiser;
@@ -161,11 +162,6 @@ final class Leader
 
 	}
 
-
-	private float genPrice(float p_mean, float p_diversity) {
-		return (float)((double)p_mean + this.m_randomizer.nextGaussian() * (double)p_diversity);
-	}
-
 	private float demand(float leader, float follower) {
 		return 2 - leader + (0.3f * follower);
 	}
@@ -219,6 +215,10 @@ final class Leader
 	}
 
 	private void setRegression(String regressionOption) {
-		//TODO: IMPLEMENT MORE REGRESSION OPTIONS
+		switch(regressionOption.toUpperCase()){
+			case "WLS":
+			default:
+				this.regression = new WLSRegression();
+		}
 	}
 }

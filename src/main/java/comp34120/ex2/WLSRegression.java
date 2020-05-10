@@ -9,6 +9,9 @@ public class WLSRegression extends Regression {
     super(records);
   }
 
+  public WLSRegression() {
+  }
+
   @Override
   public void estimateAB() {
 

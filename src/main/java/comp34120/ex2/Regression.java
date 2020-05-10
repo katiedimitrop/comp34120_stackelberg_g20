@@ -12,6 +12,9 @@ public abstract class Regression {
     this.records = records;
   }
 
+  public Regression() {
+  }
+
   abstract void estimateAB();
 
   public float getFollowerPrice(float leaderPrice) {
@@ -21,6 +24,10 @@ public abstract class Regression {
   public float getA() { return a; }
 
   public float getB() { return b; }
+
+  public void setRecords(ArrayList<Record> records) {
+    this.records = records;
+  }
 
   @Override
   public String toString() {
